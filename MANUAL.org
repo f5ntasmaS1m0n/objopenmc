@@ -1,0 +1,111 @@
+#+TITLE: The objopenmc user manual
+#+AUTHOR: S. V. Litash
+#+OPTIONS: num:nil toc:t title:t
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+
+* Overview
+
+=objopenmc= is an object-oriented Python wrapper designed for OpenMC and the CAD-to-OpenMC meshing pipeline (=CAD_to_OpenMC=).
+
+The main purpose of the library is to simplify the creation of OpenMC simulations by introducing a clear separation between *material composition* and *physical body states*. Instead of manually managing OpenMC materials, cells, temperatures, and external meshing conversions in separate scripts, =objopenmc= provides a clean high-level abstraction to construct CSG primitives and CAD-based geometries seamlessly.
+
+---
+
+* Architecture Overview
+
+The core philosophy of =objopenmc= relies on two main building blocks: *Materials* and *Bodies*.
+
+** 1. Separation of Composition and Physical State
+
+In standard reactor physics workflows, a material's recipe (its isotopic/elemental composition and nominal density) is distinct from its physical operating state (temperature, geometry instance).
+
+- ~BaseMaterial~ :: Serves as an immutable recipe definition. It stores nuclides, natural elements, thermal scattering tables ($S(\alpha, \beta)$), and nominal density with explicit units (=g/cm3=, =atom/b-cm=, etc.). It does *not* store temperature.
+- ~BaseBody~ :: Represents a physical geometric region (CAD solid, CSG cell, or boundary region). The body holds the reference to a ~BaseMaterial~ and applies local physical attributes such as *temperature* ($T$). When instantiated into OpenMC objects, the material inherits its operating temperature directly from the body it belongs to.
+
+** 2. Class Hierarchy
+
+#+BEGIN_EXAMPLE
+BaseMaterial (Data class for material composition)
+
+BaseBody (Abstract Base Class)
+├── CADConvertedBody (Automates STEP/IGES to DAGMC .h5m meshing via CAD_to_OpenMC)
+├── CSGStandardBody  (Standard OpenMC analytical CSG cells)
+└── BoundaryBody     (Vacuum / Reflective)
+#+END_EXAMPLE
+
+---
+
+* Usage Examples
+
+** Example 1: Defining Materials and CSG Bodies
+
+In this example, we define a $\text{UO}_2$ fuel material recipe and assign it to a CSG cylinder body at a specific operating temperature ($900\text{ K}$).
+
+#+BEGIN_SRC python
+import openmc
+from objopenmc import BaseMaterial, CSGStandardBody
+
+# 1. Define the material recipe (No temperature assigned here)
+uo2_fuel = BaseMaterial(
+    name="UO2_Enriched",
+    density=10.4,
+    density_units="g/cm3",
+    percent_type="wo",
+    nuclides={
+        "U235": 0.0436,
+        "U238": 0.8379,
+        "O16": 0.1185,
+    },
+)
+
+# 2. Define CSG geometry surfaces
+pin_surface = openmc.ZCylinder(r=0.4, boundary_type="transmission")
+pin_region = -pin_surface
+
+# 3. Create a CSG body, passing the material and assigning the temperature to the BODY
+fuel_pin_body = CSGStandardBody(
+    name="fuel_pin_cell",
+    region=pin_region,
+    material=uo2_fuel,
+    temperature=900.0,  # Temperature is set at the body level
+)
+
+# 4. Compile the body into a standard openmc.Cell
+openmc_cell = fuel_pin_body.build()
+#+END_SRC
+
+** Example 2: Using CAD Models with Automated DAGMC Meshing
+
+When dealing with complex CAD files (=.step=, =.sat=, etc.), ~CADConvertedBody~ handles invoking =CAD_to_OpenMC= under the hood without needing separate shell execution scripts.
+
+#+BEGIN_SRC python
+from objopenmc import BaseMaterial, CADConvertedBody
+
+# 1. Define structural material
+ss316 = BaseMaterial(
+    name="SS316",
+    density=8.0,
+    density_units="g/cm3",
+    percent_type="wo",
+    elements={
+        "Fe": 0.65,
+        "Cr": 0.17,
+        "Ni": 0.12,
+        "Mo": 0.025,
+    },
+)
+
+# 2. Define CAD component body
+cad_component = CADConvertedBody(
+    name="reactor_core_structure",
+    cad_filename="models/core_grid.step",
+    material=ss316,
+    temperature=600.0,
+    tolerance=0.05,
+    angular_tolerance=0.1,
+    output_dir="./build",
+)
+
+# 3. Automatically mesh CAD file and build a DAGMC universe
+dagmc_universe = cad_component.build()
+#+END_SRC

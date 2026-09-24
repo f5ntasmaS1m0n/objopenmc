@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2026-09-23 Wed 00:05 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The objopenmc user manual</title>
+<meta name="author" content="S. V. Litash" />
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-c:before { content: 'C'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'JavaScript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">The objopenmc user manual</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org9379d69">Overview</a></li>
+<li><a href="#org773f58f">Architecture Overview</a>
+<ul>
+<li><a href="#orgc8064d1">1. Separation of Composition and Physical State</a></li>
+<li><a href="#orgb1aaeab">2. Class Hierarchy</a></li>
+</ul>
+</li>
+<li><a href="#orgf14a549">Usage Examples</a>
+<ul>
+<li><a href="#orgacb73d3">Example 1: Defining Materials and CSG Bodies</a></li>
+<li><a href="#orgeb78ec1">Example 2: Using CAD Models with Automated DAGMC Meshing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org9379d69" class="outline-2">
+<h2 id="org9379d69">Overview</h2>
+<div class="outline-text-2" id="text-org9379d69">
+<p>
+<code>objopenmc</code> is an object-oriented Python wrapper designed for OpenMC and the CAD-to-OpenMC meshing pipeline (<code>CAD_to_OpenMC</code>).
+</p>
+
+<p>
+The main purpose of the library is to simplify the creation of OpenMC simulations by introducing a clear separation between <b>material composition</b> and <b>physical body states</b>. Instead of manually managing OpenMC materials, cells, temperatures, and external meshing conversions in separate scripts, <code>objopenmc</code> provides a clean high-level abstraction to construct CSG primitives and CAD-based geometries seamlessly.
+</p>
+
+<p>
+&mdash;
+</p>
+</div>
+</div>
+<div id="outline-container-org773f58f" class="outline-2">
+<h2 id="org773f58f">Architecture Overview</h2>
+<div class="outline-text-2" id="text-org773f58f">
+<p>
+The core philosophy of <code>objopenmc</code> relies on two main building blocks: <b>Materials</b> and <b>Bodies</b>.
+</p>
+</div>
+<div id="outline-container-orgc8064d1" class="outline-3">
+<h3 id="orgc8064d1">1. Separation of Composition and Physical State</h3>
+<div class="outline-text-3" id="text-orgc8064d1">
+<p>
+In standard reactor physics workflows, a material&rsquo;s recipe (its isotopic/elemental composition and nominal density) is distinct from its physical operating state (temperature, geometry instance).
+</p>
+
+<dl class="org-dl">
+<dt><code>BaseMaterial</code></dt><dd>Serves as an immutable recipe definition. It stores nuclides, natural elements, thermal scattering tables (\(S(\alpha, \beta)\)), and nominal density with explicit units (<code>g/cm3</code>, <code>atom/b-cm</code>, etc.). It does <b>not</b> store temperature.</dd>
+<dt><code>BaseBody</code></dt><dd>Represents a physical geometric region (CAD solid, CSG cell, or boundary region). The body holds the reference to a <code>BaseMaterial</code> and applies local physical attributes such as <b>temperature</b> (\(T\)). When instantiated into OpenMC objects, the material inherits its operating temperature directly from the body it belongs to.</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-orgb1aaeab" class="outline-3">
+<h3 id="orgb1aaeab">2. Class Hierarchy</h3>
+<div class="outline-text-3" id="text-orgb1aaeab">
+<pre class="example" id="orgd675150">
+BaseMaterial (Data class for material composition)
+
+BaseBody (Abstract Base Class)
+├── CADConvertedBody (Automates STEP/IGES to DAGMC .h5m meshing via CAD_to_OpenMC)
+├── CSGStandardBody  (Standard OpenMC analytical CSG cells)
+└── BoundaryBody     (Vacuum / Reflective)
+</pre>
+
+<p>
+&mdash;
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf14a549" class="outline-2">
+<h2 id="orgf14a549">Usage Examples</h2>
+<div class="outline-text-2" id="text-orgf14a549">
+</div>
+<div id="outline-container-orgacb73d3" class="outline-3">
+<h3 id="orgacb73d3">Example 1: Defining Materials and CSG Bodies</h3>
+<div class="outline-text-3" id="text-orgacb73d3">
+<p>
+In this example, we define a \(\text{UO}_2\) fuel material recipe and assign it to a CSG cylinder body at a specific operating temperature (\(900\text{ K}\)).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><code><span style="color: #0031a9;">import</span> openmc
+<span style="color: #0031a9;">from</span> objopenmc <span style="color: #0031a9;">import</span> BaseMaterial, CSGStandardBody
+
+<span style="color: #7f0000;"># </span><span style="color: #7f0000;">1. Define the material recipe (No temperature assigned here)
+</span><span style="color: #00603f;">uo2_fuel</span> <span style="color: #000000;">=</span> BaseMaterial(
+    name<span style="color: #000000;">=</span><span style="color: #00598b;">"UO2_Enriched"</span>,
+    density<span style="color: #000000;">=</span>10.4,
+    density_units<span style="color: #000000;">=</span><span style="color: #00598b;">"g/cm3"</span>,
+    percent_type<span style="color: #000000;">=</span><span style="color: #00598b;">"wo"</span>,
+    nuclides<span style="color: #000000;">=</span>{
+        <span style="color: #00598b;">"U235"</span>: 0.0436,
+        <span style="color: #00598b;">"U238"</span>: 0.8379,
+        <span style="color: #00598b;">"O16"</span>: 0.1185,
+    },
+)
+
+<span style="color: #7f0000;"># </span><span style="color: #7f0000;">2. Define CSG geometry surfaces
+</span><span style="color: #00603f;">pin_surface</span> <span style="color: #000000;">=</span> openmc.ZCylinder(r<span style="color: #000000;">=</span>0.4, boundary_type<span style="color: #000000;">=</span><span style="color: #00598b;">"transmission"</span>)
+<span style="color: #00603f;">pin_region</span> <span style="color: #000000;">=</span> <span style="color: #000000;">-</span>pin_surface
+
+<span style="color: #7f0000;"># </span><span style="color: #7f0000;">3. Create a CSG body, passing the material and assigning the temperature to the BODY
+</span><span style="color: #00603f;">fuel_pin_body</span> <span style="color: #000000;">=</span> CSGStandardBody(
+    name<span style="color: #000000;">=</span><span style="color: #00598b;">"fuel_pin_cell"</span>,
+    region<span style="color: #000000;">=</span>pin_region,
+    material<span style="color: #000000;">=</span>uo2_fuel,
+    temperature<span style="color: #000000;">=</span>900.0,  <span style="color: #7f0000;"># </span><span style="color: #7f0000;">Temperature is set at the body level
+</span>)
+
+<span style="color: #7f0000;"># </span><span style="color: #7f0000;">4. Compile the body into a standard openmc.Cell
+</span><span style="color: #00603f;">openmc_cell</span> <span style="color: #000000;">=</span> fuel_pin_body.build()
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeb78ec1" class="outline-3">
+<h3 id="orgeb78ec1">Example 2: Using CAD Models with Automated DAGMC Meshing</h3>
+<div class="outline-text-3" id="text-orgeb78ec1">
+<p>
+When dealing with complex CAD files (<code>.step</code>, <code>.sat</code>, etc.), <code>CADConvertedBody</code> handles invoking <code>CAD_to_OpenMC</code> under the hood without needing separate shell execution scripts.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><code><span style="color: #0031a9;">from</span> objopenmc <span style="color: #0031a9;">import</span> BaseMaterial, CADConvertedBody
+
+<span style="color: #7f0000;"># </span><span style="color: #7f0000;">1. Define structural material
+</span><span style="color: #00603f;">ss316</span> <span style="color: #000000;">=</span> BaseMaterial(
+    name<span style="color: #000000;">=</span><span style="color: #00598b;">"SS316"</span>,
+    density<span style="color: #000000;">=</span>8.0,
+    density_units<span style="color: #000000;">=</span><span style="color: #00598b;">"g/cm3"</span>,
+    percent_type<span style="color: #000000;">=</span><span style="color: #00598b;">"wo"</span>,
+    elements<span style="color: #000000;">=</span>{
+        <span style="color: #00598b;">"Fe"</span>: 0.65,
+        <span style="color: #00598b;">"Cr"</span>: 0.17,
+        <span style="color: #00598b;">"Ni"</span>: 0.12,
+        <span style="color: #00598b;">"Mo"</span>: 0.025,
+    },
+)
+
+<span style="color: #7f0000;"># </span><span style="color: #7f0000;">2. Define CAD component body
+</span><span style="color: #00603f;">cad_component</span> <span style="color: #000000;">=</span> CADConvertedBody(
+    name<span style="color: #000000;">=</span><span style="color: #00598b;">"reactor_core_structure"</span>,
+    cad_filename<span style="color: #000000;">=</span><span style="color: #00598b;">"models/core_grid.step"</span>,
+    material<span style="color: #000000;">=</span>ss316,
+    temperature<span style="color: #000000;">=</span>600.0,
+    tolerance<span style="color: #000000;">=</span>0.05,
+    angular_tolerance<span style="color: #000000;">=</span>0.1,
+    output_dir<span style="color: #000000;">=</span><span style="color: #00598b;">"./build"</span>,
+)
+
+<span style="color: #7f0000;"># </span><span style="color: #7f0000;">3. Automatically mesh CAD file and build a DAGMC universe
+</span><span style="color: #00603f;">dagmc_universe</span> <span style="color: #000000;">=</span> cad_component.build()
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: S. V. Litash</p>
+<p class="date">Created: 2026-09-23 Wed 00:05</p>
+</div>
+</body>
+</html>

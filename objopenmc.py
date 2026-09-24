@@ -18,11 +18,17 @@ along with this program (see LICENSE file). If not, see <https://www.gnu.org/lic
 """
 
 from abc import ABC, abstractmethod
-#from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
+import pathlib
+import warnings
 import openmc
-import CAD_to_OpenMC
+
+try:
+    import CAD_to_OpenMC.assembly as cad_assembly
+except ImportError:
+    cad_assembly = None
+
 
 @dataclass
 class BaseMaterial:
@@ -39,11 +45,11 @@ class BaseMaterial:
         mat = openmc.Material(name=mat_name)
         mat.set_density(self.density_units, self.density)
 
-        for nucleides_count, fraction in self.nuclides.items():
-            mat.add_nuclide(nucleides_count, fraction, percent_type=self.percent_type)
+        for nuclide, fraction in self.nuclides.items():
+            mat.add_nuclide(nuclide, fraction, percent_type=self.percent_type)
 
-        for elements_count, fraction in self.elements.items():
-            mat.add_element(elements_count, fraction, percent_type=self.percent_type)
+        for element, fraction in self.elements.items():
+            mat.add_element(element, fraction, percent_type=self.percent_type)
 
         for sab in self.sab_tables:
             mat.add_s_alpha_beta(sab)
@@ -53,18 +59,24 @@ class BaseMaterial:
 
         return mat
 
+
 class BaseBody(ABC):
     def __init__(self, name: str, material: Optional[BaseMaterial] = None, temperature: Optional[float] = None, volume: Optional[float] = None):
         self.name = name
         self.material = material
         self.temperature = temperature
+        self.volume = volume
 
     @abstractmethod
+    def build(self) -> Any:
+        pass
+
     def get_openmc_material(self) -> Optional[openmc.Material]:
         if self.material is None:
             return None
 
-        return self.material.make_openmc_material(temperature = self.temperature, instance_id = self.name)
+        return self.material.make_openmc_material(temperature=self.temperature, instance_id=self.name)
+
 
 class BoundaryBody(BaseBody):
     def __init__(self, name: str, region: openmc.Region, boundary_type: str = "vacuum"):
@@ -72,22 +84,48 @@ class BoundaryBody(BaseBody):
         self.region = region
         self.boundary_type = boundary_type
 
-    def build_cell() -> openmc.Cell:
+    def build(self) -> openmc.Cell:
         cell = openmc.Cell(name=self.name, region=self.region, fill=None)
         return cell
 
-class CADUnitBody(BaseBody):
-    def __init__(self, name: str, cad_filename: str, material: BaseMaterial, temperature: Optional[float], meshing_parameters: Optional[Dict[str, Any]] = None):
-        super().__init__(name = name, material = material, temperature = temperature)
-        self.cad_filename = cad_filename
-        self.meshing_parameters = meshing_parameters or {}
 
-class CSGBodyUnit(BaseBody):
+class CADConvertedBody(BaseBody):
+    def __init__(self, name: str, cad_filename: str, material: BaseMaterial, temperature: Optional[float] = None, tolerance: float = 0.1, angular_tolerance: float = 0.2, output_dir: str = "."):
+        super().__init__(name=name, material=material, temperature=temperature)
+        self.cad_filename = cad_filename
+        self.tolerance = tolerance
+        self.angular_tolerance = angular_tolerance
+        self.output_dir = pathlib.Path(output_dir)
+
+    def convert_cad_to_h5m(self, h5m_filename: Optional[str] = None) -> str:
+        if cad_assembly is None:
+            raise RuntimeError("CAD_to_OpenMC is not installed in current environment!")
+
+        target_h5m = h5m_filename or f"{self.name}.h5m"
+        output_path = self.output_dir / target_h5m
+
+        assembly = cad_assembly.Assembly([self.cad_filename])
+        assembly.tolerance = self.tolerance
+        assembly.angular_tolerance = self.angular_tolerance
+
+        openmc_mat = self.get_openmc_material()
+
+        assembly.run(backend="gmsh", h5m_filename=str(output_path))
+
+        return str(output_path)
+
+    def build(self) -> openmc.DAGMCUniverse:
+        h5m_file = self.convert_cad_to_h5m()
+        dagmc_univ = openmc.DAGMCUniverse(filename=h5m_file)
+        return dagmc_univ
+
+
+class CSGStandardBody(BaseBody):
     def __init__(self, name: str, region: openmc.Region, material: Optional[BaseMaterial] = None, temperature: Optional[float] = None):
         super().__init__(name=name, material=material, temperature=temperature)
         self.region = region
 
-    def build_cell() -> openmc.Cell:
+    def build(self) -> openmc.Cell:
         cell = openmc.Cell(name=self.name, region=self.region)
         cell.fill = self.get_openmc_material()
 
