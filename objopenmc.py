@@ -42,6 +42,24 @@ class Material:
 
         return mat
 
+@dataclass
 class BaseBody:
-    def __init__(self):
-        pass
+    id: str
+    temperature: float
+    material: Material
+
+@dataclass
+class CADBody(BaseBody):
+    model_file: str
+    mesh_engine: str
+    mesh_tolerance: float
+    merging: bool
+
+    def convert_cad_to_h5m(self, output: str) -> str:
+        assembly = cad_assembly.Assembly([self.model_file])
+        assembly.run(backend=self.mesh_engine, merge = self.merging, h5m_filename=output)
+        return output
+
+
+class CSGBody(BaseBody):
+    pass
