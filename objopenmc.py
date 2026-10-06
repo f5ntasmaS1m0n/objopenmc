@@ -17,12 +17,13 @@ along with this program (see LICENSE file). If not, see <https://www.gnu.org/lic
 
 """
 import openmc
-import pathlib
-from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 import CAD_to_OpenMC.assembly as cad_assembly
 
+#id - name
+#density_type - g/cm3 | kg/m3 | atom/b-cm | atom/cm3
+#molar_fraction_type - ao(atom percent) | wo(weight percent)
 @dataclass
 class Material:
     id: str
