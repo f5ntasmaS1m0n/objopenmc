@@ -21,9 +21,11 @@ from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 import CAD_to_OpenMC.assembly as cad_assembly
 
-#id - name
-#density_type - g/cm3 | kg/m3 | atom/b-cm | atom/cm3
-#molar_fraction_type - ao(atom percent) | wo(weight percent)
+"""
+id - name
+density_type - g/cm3 | kg/m3 | atom/b-cm | atom/cm3
+molar_fraction_type - ao(atom percent) | wo(weight percent)
+"""
 @dataclass
 class Material:
     id: str
@@ -34,14 +36,28 @@ class Material:
 
     def generate_openmc_material(self) -> openmc.Material:
 
-        mat = openmc.Material(name=self.id)
+        mat = openmc.Material(name = self.id)
 
         mat.set_density(self.density_type, self.density)
 
         for nuclide, fraction in self.nuclides.items():
-            mat.add_nuclide(nuclide, fraction, percent_type=self.molar_fraction_type)
+            mat.add_nuclide(nuclide, fraction, percent_type = self.molar_fraction_type)
 
         return mat
+
+@dataclass
+class Universe:
+    universe_filename: str
+    boundary_type: str
+    boundary_geometry: str
+
+    def create_universe(self):
+
+        dag_universe = openmc.DAGMCUniverse(self.universe_filename)
+
+        universe = dag_universe.bounded_universe(boundary_type=self.boundary_type, bounded_type=self.boundary_geometry)
+
+        return universe
 
 @dataclass
 class BaseBody:
@@ -57,8 +73,11 @@ class CADBody(BaseBody):
     merging: bool
 
     def convert_cad_to_h5m(self, output: str) -> str:
+
         assembly = cad_assembly.Assembly([self.model_file])
-        assembly.run(backend=self.mesh_engine, merge = self.merging, h5m_filename=output)
+
+        assembly.run(backend = self.mesh_engine, merge = self.merging, h5m_filename = output)
+
         return output
 
 
